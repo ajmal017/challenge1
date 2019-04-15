@@ -5,10 +5,15 @@ import pandas as pd
 def get_rapidAPI():
     url = "https://apidojo-yahoo-finance-v1.p.rapidapi.com/market/get-movers?region=US&lang=en"
     params = {  "X-RapidAPI-Host": "apidojo-yahoo-finance-v1.p.rapidapi.com",
-                "X-RapidAPI-Key": "33c24add40mshec4f88fbe6795afp1c8e37jsnc0fcd9eabe11"}
+                "X-RapidAPI-Key": "90d1e64ae4mshcb265f14be79861p196724jsn40a7d5c76938"}
                 
-    response = requests.get(url, params).json() 
-    return response
+    resp = requests.get(url, headers=params).json() 
+    res = resp["result"]
+    gainers, losers, active = res[0]["quotes"], res[1]["quotes"], res[2]["quotes"]
+    g = pd.DataFrame(gainers)
+    l = pd.DataFrame(losers)
+    a = pd.DataFrame(active)
+    return g, l, a
 
 def get_AlphaVantage(ticker):
     url = "https://www.alphavantage.co/query"
@@ -51,9 +56,13 @@ def get_eodOptions(ticker, api_token = "5c958084138e54.81660498"):
 def output_to_excel(ticker):
     df1 = get_AlphaVantage(ticker)
     df2 = get_eodOptions(ticker)
+    dfG, dfL, dfA = get_rapidAPI()
     with pd.ExcelWriter("MarketData.xlsx") as writer:
-        df1.to_excel(writer, sheet_name="Stock_Prices")
+        df1.to_excel(writer, sheet_name=f"{ticker}_Prices")
         df2.to_excel(writer, sheet_name="Options_Info")
+        dfG.to_excel(writer, sheet_name="Gainers")
+        dfL.to_excel(writer, sheet_name="Losers")
+        dfA.to_excel(writer, sheet_name="Most_Active")
 
-# print(get_rapidAPI())
+ 
 output_to_excel("AAPL")
