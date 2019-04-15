@@ -9,3 +9,28 @@ services:
       - APP_NAME=MyFlaskApp
     ports:
       - 5001:80
+  
+  mysql-dev:
+    image: mysql:8.0.2
+    environment:
+      MYSQL_ROOT_PASSWORD: ""
+      MYSQL_DATABASE: sampledb
+    ports:
+      - 3308:3306
+  
+  tomcat-dev:
+    image: tomcat:8.5.35
+    container_name: tomcat
+    volumes:
+      - ./docker/myapp.war:/usr/local/tomcat/webapps/myapp.war
+    ports:
+      - 8080:8080
+
+  ibm-mq:
+    image: ibmcom/mq
+    container_name: mqserver
+    environment:
+        LICENSE: accept
+        MQ_QMGR_NAME: MQAZ01
+    ports:
+      - 1616:1616

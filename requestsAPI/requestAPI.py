@@ -55,5 +55,5 @@ def output_to_excel(ticker):
         df1.to_excel(writer, sheet_name="Stock_Prices")
         df2.to_excel(writer, sheet_name="Options_Info")
 
-print(get_rapidAPI())
-# output_to_excel("AAPL")
+# print(get_rapidAPI())
+output_to_excel("AAPL")
